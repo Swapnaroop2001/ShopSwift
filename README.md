@@ -10,6 +10,5 @@ We’ll be back soon with updates! Keep an eye on this space.
 
 📢 **Stay Connected**  
 For any inquiries or updates, feel free to reach out at [swapnaroop2001@gmail.com](mailto:swapnaroop2001@gmail.com).  
-For any inquiries or updates, feel free to reach out!
 
 🔜 **See You Soon!**
