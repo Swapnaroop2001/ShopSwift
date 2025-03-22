@@ -2,11 +2,6 @@
 
 🚀 **ShopSwift** is currently undergoing updates! We're working hard to bring you an even better experience. Stay tuned for exciting new features and improvements.
 
-```markdown
-# ShopSwift
-
-🚀 **ShopSwift** is currently undergoing updates! We're working hard to bring you an even better experience. Stay tuned for exciting new features and improvements.
-
 🔧 **What’s Happening?**  
 We're refining our platform to enhance performance, security, and usability.
 
@@ -18,5 +13,3 @@ For any inquiries or updates, feel free to reach out at [swapnaroop2001@gmail.co
 For any inquiries or updates, feel free to reach out!
 
 🔜 **See You Soon!**
-```
-
