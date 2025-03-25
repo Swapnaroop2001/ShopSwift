@@ -1,14 +1,14 @@
-# ShopSwift
+# ShopSwift  
 
-🚀 **ShopSwift** is currently undergoing updates! We're working hard to bring you an even better experience. Stay tuned for exciting new features and improvements.
+🚀 **ShopSwift** is currently undergoing updates! I'm actively working on both the frontend and multiple microservices to bring an even better experience. Stay tuned for exciting new features and improvements.  
 
 🔧 **What’s Happening?**  
-We're refining our platform to enhance performance, security, and usability.
+I'm enhancing the platform by improving the frontend and refining key microservices to boost performance, security, and usability.  
 
-📅 **When Will We Be Back?**  
-We’ll be back soon with updates! Keep an eye on this space.
+📅 **When Will It Be Ready?**  
+I'm making steady progress and will share updates soon! Keep an eye on this space.  
 
 📢 **Stay Connected**  
 For any inquiries or updates, feel free to reach out at [swapnaroop2001@gmail.com](mailto:swapnaroop2001@gmail.com).  
 
-🔜 **See You Soon!**
+🔜 **See You Soon!**  
