@@ -27,7 +27,7 @@
     "react": "^18.0.0",
     "react-apple-login": "^1.1.6",
     "react-dom": "^18.0.0",
-    "react-router-dom": "^7.4.0",
+    "react-router-dom": "^7.4.1",
     "sonner": "^2.0.2",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.14",

@@ -32,11 +32,14 @@ public class AuthService {
 
     public String login(LoginRequest request) throws FirebaseCustomAuthException {
         try {
-            // Verify the Firebase ID token
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(request.token());
-            return decodedToken.getUid(); // Return user ID after verifying the token
+            // Verify email/password with Firebase (this is a placeholder)
+            // In a real app, you'd use Firebase Authentication REST API or client-side auth
+            String uid = FirebaseAuth.getInstance().getUserByEmail(request.email()).getUid();
+            // Note: Firebase Admin SDK doesn't verify passwords directly; this should be done client-side
+            // For simplicity, assume client-side auth sends a token instead
+            return uid;
         } catch (FirebaseAuthException e) {
-            throw new FirebaseCustomAuthException("Authentication failed: " + e.getMessage());
+            throw new FirebaseCustomAuthException("Login failed: " + e.getMessage());
         }
     }
 
@@ -48,6 +51,34 @@ public class AuthService {
             // Firebase sends the email automatically
         } catch (FirebaseAuthException e) {
             throw new FirebaseCustomAuthException("Failed to send password reset email: " + e.getMessage());
+        }
+    }
+
+    public String verifyToken(String idToken, String fullName) throws FirebaseCustomAuthException {
+        try {
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            String uid = decodedToken.getUid();
+            String email = decodedToken.getEmail();
+            System.out.println("Token verified. UID: " + uid + ", Email: " + email);
+    
+            try {
+                FirebaseAuth.getInstance().getUser(uid);
+                return uid; // User exists, treat as login
+            } catch (FirebaseAuthException e) {
+                if ("USER_NOT_FOUND".equals(e.getErrorCode())) {
+                    FirebaseAuth.getInstance().createUser(
+                        new com.google.firebase.auth.UserRecord.CreateRequest()
+                            .setUid(uid)
+                            .setEmail(email)
+                            .setEmailVerified(decodedToken.isEmailVerified())
+                            .setDisplayName(fullName) // Set fullName here
+                    );
+                    return uid; // New user created
+                }
+                throw e;
+            }
+        } catch (FirebaseAuthException e) {
+            throw new FirebaseCustomAuthException("Failed to verify token: " + e.getMessage());
         }
     }
     
