@@ -9,14 +9,72 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import axios from "axios";
+import { toast, Toaster } from "sonner";  // Import toast function
 
 export function SignupForm({
   className,
-  onSwitch,
+  onSwitch = () => {},
   ...props
 }: React.ComponentPropsWithoutRef<"div"> & { onSwitch: () => void }) {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
+    }
+  
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long!");
+      return;
+    }
+  
+    console.log("Validation passed, sending request");
+    console.log("API_URL:", API_URL); // Verify the URL
+    console.log("Request data:", { fullName, email, password }); // Verify payload
+  
+    try {
+      const response = await axios.post(`${API_URL}/signup`, {
+        fullName,
+        email,
+        password,
+      });
+      console.log("Response received:", response.data);
+      toast.success("Signup successful!");
+      // setFullName("");
+      // setEmail("");
+      // setPassword("");
+      // setConfirmPassword("");
+    } catch (error) {
+      console.log("Error caught:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.log("Error status:", error.response.status);
+        console.log("Error response data:", error.response.data);
+        if (error.response.status === 409) {
+          toast.error("User already exists with this email! Please login.");
+        } else {
+          toast.error(error.response.data || "An unexpected error occurred.");
+        }
+      } else {
+        console.log("Non-Axios error:", error);
+        toast.error("An unexpected error occurred.");
+      }
+    }
+  };
+  
+  
   return (
-    <div className={cn("flex flex-col gap-2", className)} {...props}>
+    <div className={cn("flex flex-col gap-1", className)} {...props}>
+      <Toaster position="top-center" richColors expand />
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Join Us!</CardTitle>
@@ -25,7 +83,7 @@ export function SignupForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSignUp}>
             <div className="grid gap-2">
               <div className="flex flex-col gap-2">
                 <Button variant="outline" className="w-full">
@@ -35,7 +93,7 @@ export function SignupForm({
                       fill="currentColor"
                     />
                   </svg>
-                  Sign up with Apple
+                  Login with Apple
                 </Button>
                 <Button variant="outline" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -44,50 +102,69 @@ export function SignupForm({
                       fill="currentColor"
                     />
                   </svg>
-                  Sign up with Google
+                  Login with Google
                 </Button>
               </div>
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                  Or sign up with email
+                  Or continue with
                 </span>
               </div>
-              <div className="grid gap-3">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" type="text" placeholder="John Doe" required />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" required />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
-                  <Input id="confirm-password" type="password" required />
-                </div>
-                <Button type="submit" className="w-full">
-                  Sign Up
-                </Button>
+              <div className="grid gap-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
               </div>
-              <div className="text-center text-sm">
-                Already have an account?{" "}
-                <Button
-                  variant='ghost'
-                  onClick={onSwitch}
-                  className="underline-offset-4 hover:text-primary"
-                >
-                  Login
-                </Button>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirm-password">Confirm Password</Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                Sign Up
+              </Button>
+            <div className="text-center text-sm">
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={onSwitch}
+                className=" underline-offset-4 hover:text-primary"
+              >
+                Login
+              </button>
+            </div>
             </div>
           </form>
         </CardContent>

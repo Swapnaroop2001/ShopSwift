@@ -1,14 +1,16 @@
 package com.shopswift.auth_service.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import com.shopswift.auth_service.dto.LoginRequest;
 import com.shopswift.auth_service.dto.SignUpRequest;
 import com.shopswift.auth_service.exception.FirebaseCustomAuthException;
 import com.shopswift.auth_service.service.AuthService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 
     private final AuthService authService;
@@ -18,14 +20,56 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody SignUpRequest request) throws FirebaseCustomAuthException {
-        String userId = authService.signUp(request);
-        return ResponseEntity.ok("User created successfully with ID: " + userId);
+    public ResponseEntity<?> signUp(@RequestBody SignUpRequest request) {
+        try {
+            String userId = authService.signUp(request);
+            return ResponseEntity.ok("User created successfully with ID: " + userId);
+        } catch (FirebaseCustomAuthException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong. Please try again.");
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) throws FirebaseCustomAuthException {
-        String userId = authService.login(request);
-        return ResponseEntity.ok("User authenticated successfully with ID: " + userId);
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            String userId = authService.login(request);
+            return ResponseEntity.ok("User authenticated successfully with ID: " + userId);
+        } catch (FirebaseCustomAuthException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong. Please try again.");
+        }
+    }
+
+    // New endpoint for forgot password
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        System.out.println("Received forgot password request for email: " + request.getEmail());
+        try {
+            authService.sendPasswordResetEmail(request.getEmail());
+            return ResponseEntity.ok("Password reset email sent successfully.");
+        } catch (FirebaseCustomAuthException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to send reset email. Please try again.");
+        }
+    }
+
+}
+
+class ForgotPasswordRequest {
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
